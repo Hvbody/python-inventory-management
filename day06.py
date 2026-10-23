@@ -115,7 +115,7 @@ def show_statistics(products):
     total_num = len(products)
     if total_num != 0:
         ave = total_stock / total_num
-        print(f"产品总数：{total_num}\n库存总量：{total_stock}\n平均库存：{ave}")
+        print(f"产品总数：{total_num}\n库存总量:{total_stock}\n平均库存:{ave}")
     else:
         print(f"产品总数：{total_num},库存总量：{total_stock}")
 
@@ -131,7 +131,7 @@ def Add_product(products):
                 try:
                     price = float(input("请输入单价："))
                     if price <=0:
-                        print("单价必须大于0，请重新输入")
+                        print("单价必须大于0,请重新输入")
                         continue
                     break
                 except ValueError:
@@ -153,7 +153,9 @@ def Add_product(products):
             products.append(new_product)
         else :
             print("输入的产品名称已经存在")
-
+def show_single_product(res):
+     print(f"产品名称：{res['name']},单价：{res['price']},库存：{res['stock']}")
+    
 
 text ="""=============库存管理系统=============
 1.显示所有产品
@@ -168,7 +170,7 @@ text ="""=============库存管理系统=============
 10.新增库存产品
 0.退出程序
 =======================================
-请输入你的选择： """
+"""
 
 #print(text)  菜单页面的输出放在循环里面
 while True:
@@ -195,10 +197,10 @@ while True:
         if res is None:
             print(f"未能找到该产品")
         else:
-            print(f"产品名称：{res['name']},单价：{res['price']},库存：{res['stock']}")
+            show_single_product(res)
     elif choice == "9":
         res1=update_stock(products)
-        show_products(products)
+        show_single_product(res1)
     elif choice == "10":
         Add_product(products)
     
