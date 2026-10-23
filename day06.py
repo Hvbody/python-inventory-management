@@ -56,15 +56,6 @@ def show_high_price(products):
     for product in products:
         if product["price"]>=120:
             print(f"产品名称：{product['name']},单价：{product['price']}")
-"""
-def calculate_total(products):
-    total_stock=0
-    total_number=0
-    for product in products:
-        total_number=total_number+1
-        total_stock=total_stock+product["stock"]
-    print(f"产品总数：{total_number},库存总量：{total_stock}")
-"""
 
 def show_difference_stocklevel(products):
     for product in products:
