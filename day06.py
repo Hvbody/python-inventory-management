@@ -45,6 +45,9 @@ def find_low_stock(products,threshold):
             print(f"产品名称：{product['name']},库存：{product['stock']}---库存不足")
 
 def find_max_stock_product(products):
+    if len(products)==0:
+        print("当前没有产品,无法查找库存最大值")
+        return None
     max_product=products[0]
     for product in products:
         if max_product["stock"]<product["stock"]:
@@ -86,6 +89,7 @@ def update_stock(products):
     res = find_product_by_name(products,search_name)
     if res is None:
         print(f"未能找到该产品")
+        return None
     else:
         while True:
             number = input("输入新的库存数量：")
@@ -98,7 +102,7 @@ def update_stock(products):
             except ValueError:
                 print(f"输入的是：{number}，这个是不是合法数字")
         res["stock"] = num
-    return res
+        return res
 
 #功能4的展示
 def show_statistics(products):
@@ -130,7 +134,7 @@ def Add_product(products):
             while True:
                 try:
                     stock = int(input("请输入库存："))
-                    if price <0:
+                    if stock <0:
                         print("库存必须大于0,请重新输入")
                         continue
                     break
@@ -142,6 +146,8 @@ def Add_product(products):
                 "stock" : stock
             }
             products.append(new_product)
+            print("新增加的产品：")
+            show_single_product(new_product)
         else :
             print("输入的产品名称已经存在")
 def show_single_product(res):
@@ -219,7 +225,8 @@ while True:
             show_single_product(res)
     elif choice == "9":
         res1=update_stock(products)
-        show_single_product(res1)
+        if res1 is not None:
+            show_single_product(res1)
     elif choice == "10":
         Add_product(products)
 
