@@ -155,7 +155,34 @@ def Add_product(products):
             print("输入的产品名称已经存在")
 def show_single_product(res):
      print(f"产品名称：{res['name']},单价：{res['price']},库存：{res['stock']}")
-    
+
+def delete_product(products):
+    product_name = input("输入需要删除产品的名字：").strip()
+    if product_name == "":
+        print("输入新的名字不能为空")
+    else:
+        res = find_product_by_name(products,product_name)
+        if res is None:
+            print(f"未能找到该产品")
+        else:
+            products.remove(res)
+            print(f"成功删除该产品")
+
+
+#这个是库存产品价值排序的代码，要加强理解sorted
+def get_product_value(product):
+    return product["price"]*product["stock"]
+
+
+def sort_products_by_value(products):
+    sorted_products = sorted(products,
+                             key=get_product_value,#这个是key是传入方法
+                             reverse=True)
+
+    for product in sorted_products:
+        value = get_product_value(product)
+        print(f"{product['name']}--库存货值：{value}")
+
 
 text ="""=============库存管理系统=============
 1.显示所有产品
@@ -168,9 +195,10 @@ text ="""=============库存管理系统=============
 8.按名称查找产品
 9.修改库存
 10.新增库存产品
+11.删除库存产品
+12.产品价值排序
 0.退出程序
-=======================================
-"""
+======================================="""
 
 #print(text)  菜单页面的输出放在循环里面
 while True:
@@ -203,7 +231,11 @@ while True:
         show_single_product(res1)
     elif choice == "10":
         Add_product(products)
-    
+
+    elif choice == "11":
+        delete_product(products)
+    elif choice == "12":
+        sort_products_by_value(products)
     elif choice =="":
         print(f"输入不能为空！")
     elif choice =="0":
