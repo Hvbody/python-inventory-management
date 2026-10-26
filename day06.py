@@ -69,10 +69,19 @@ def show_difference_stocklevel(products):
         else :
             print(f"产品名称：{product['name']},库存等级：充足") 
 
-def calculate_total_price(products):
+#新增计算总价值的算法            
+def calculate_total_value(products):
+    total_value = 0
+    for product in products:
+        total_pricestock= get_product_value(product)
+        total_pricestock = total_pricestock +total_value
+    return total_value
+
+
+def show_total_price(products):
     total_pricestock=0
     for product in products:
-        total_price = product["stock"]*product["price"]
+        total_price = get_product_value(product)
         total_pricestock = total_pricestock +total_price
         print(f"产品名称：{product['name']},货物价值：{total_price}")
     print(f"货物总价值：{total_pricestock}")
@@ -180,6 +189,44 @@ def sort_products_by_value(products):
         value = get_product_value(product)
         print(f"{product['name']}--库存货值：{value}")
 
+def inventory_report(products):
+    print("库存综合报告：")
+    show_statistics(products)
+    show_total_price(products)
+    max_stock =  find_max_stock_product(products)
+    max_value =  find_max_price_product(products)
+
+#寻找最大价值
+def find_max_price_product(products):
+    if len(products)==0:
+        print("当前没有产品,无法查找库存最高价值")
+        return None
+    max_product=products[0]
+    for product in products:
+        if get_product_value(max_product)<get_product_value(product):
+            max_product=product
+    print(f"货值最高的产品：{max_product['name']},货值：{get_product_value(max_product)}")
+    return max_product
+
+
+#day09--新增组合筛选功能
+def filter_products(products,min_stock,min_value):
+    leg_products = [ ]
+    if_stock = 0
+    if_value = 0
+    for product in products:
+        if product["stock"] > min_stock :
+            if_stock=if_stock+1
+            if get_product_value(product) >min_value:
+                if_value = if_value +1
+                leg_products.append(product)
+    if if_stock == 0:
+        print(f"没有库存大于:{min_stock}")
+    else:
+        if if_value == 0:
+            print(f"没有库存价值大于：{min_value}")
+    return leg_products
+
 
 text ="""=============库存管理系统=============
 1.显示所有产品
@@ -194,6 +241,8 @@ text ="""=============库存管理系统=============
 10.新增库存产品
 11.删除库存产品
 12.产品价值排序
+13.生成综合库存分析报告
+14.组合筛选产品
 0.退出程序
 ======================================="""
 
@@ -215,7 +264,7 @@ while True:
     elif choice == "6":
         show_difference_stocklevel(products)
     elif choice == "7":
-        calculate_total_price(products)
+        show_total_price(products)
     elif choice == "8":
         search_name = input("输入产品名称：")
         res = find_product_by_name(products,search_name)
@@ -234,6 +283,30 @@ while True:
         delete_product(products)
     elif choice == "12":
         sort_products_by_value(products)
+    elif choice == "13":
+        inventory_report(products)
+    elif choice == "14":
+        while True:
+            try:
+                min_stock = int(input("输入最低库存："))                    
+                if min_stock <0:
+                    print("库存必须是非负整数,请重新输入")
+                    continue
+                break
+            except ValueError:
+                print("输入错误，请输入数字")
+        while True:
+            try:
+                min_value = int(input("输入最低价值："))                    
+                if min_stock <0:
+                    print("价值必须是非负整数,请重新输入")
+                    continue
+                break
+            except ValueError:
+                print("输入错误，请输入数字")
+        products_filter =filter_products(products,min_stock,min_value)
+        if len(products_filter) !=0:
+            show_products(products_filter)
     elif choice =="":
         print(f"输入不能为空！")
     elif choice =="0":
