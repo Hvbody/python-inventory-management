@@ -287,6 +287,7 @@ text ="""=============库存管理系统=============
 12.产品价值排序
 13.生成综合库存分析报告
 14.组合筛选产品
+15.生成CSV的报告
 0.退出程序
 ======================================="""
 
@@ -351,6 +352,17 @@ while True:
         products_filter =filter_products(products,min_stock,min_value)
         if len(products_filter) !=0:
             show_products(products_filter)
+    elif choice == "15":
+        while True:
+            filename = input("请输入文件名：").strip()
+            if filename == "":
+                print(f"文件名输入不能为空！")  
+                continue
+            break
+        if not filename.lower().endswith(".csv"):
+            filename +=".csv"
+        export_products_to_csv(products,filename)
+
     elif choice =="":
         print(f"输入不能为空！")
     elif choice =="0":
@@ -358,4 +370,6 @@ while True:
         break
     else: print(f"无效选项，请重新输入")
 
-export_products_to_csv(products,"inventory_export.csv")
+
+#测试使用
+#export_products_to_csv(products,"inventory_export.csv")
