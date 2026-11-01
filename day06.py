@@ -1,3 +1,5 @@
+import csv
+
 product_a ={
     "name" : "Valve A",
     "stock": 20,
@@ -188,14 +190,20 @@ def sort_products_by_value(products):
     for product in sorted_products:
         value = get_product_value(product)
         print(f"{product['name']}--库存货值：{value}")
-
+"""
 def inventory_report(products):
     print("库存综合报告：")
     show_statistics(products)
     show_total_price(products)
     max_stock =  find_max_stock_product(products)
     max_value =  find_max_price_product(products)
-
+"""
+def inventory_report(products):
+    print("库存综合报告：")
+    new_prouduct = build_inventory_summary(products)
+    for i,j in new_prouduct.items():
+        print(f"{i} : {j}")
+    
 #寻找最大价值
 def find_max_price_product(products):
     if len(products)==0:
@@ -227,6 +235,42 @@ def filter_products(products,min_stock,min_value):
             print(f"没有库存价值大于：{min_value}")
     return leg_products
 
+#day10任务1：建立统一的统计数据函数，未解决返回值None的问题
+def build_inventory_summary(products):
+    product_count = len(products)
+    total_stock  = calculate_total_stock(products)
+    average_stock = total_stock / product_count
+    total_value = calculate_total_value(products)
+    max_stock_product = find_max_stock_product
+    max_value_product = find_max_price_product
+    new_static_product = {
+        "product_count" : product_count,
+        "total_stock" :total_stock,
+        "average_stock" : average_stock,
+        "total_value": total_value,
+        "max_stock_product": max_stock_product,
+        "max_value_product" : max_value_product
+    }
+    return new_static_product
+
+
+def export_products_to_csv(products,filename):
+    try :
+        with open(filename,"w",newline="",encoding="utf-8-sig") as file:
+            writer =csv.writer(file)
+            writer.writerow(["name","price","stock","value"])
+            for product in products:
+                value = get_product_value(product)
+                writer.writerow([
+                    product["name"],
+                    product["price"],
+                    product["stock"],
+                    value
+                ])
+        print(f"成功导出{len(products)}条产品数据到{filename}")
+    except OSError as e:
+        print(f"文件导出失败：{e}")
+    
 
 text ="""=============库存管理系统=============
 1.显示所有产品
@@ -313,3 +357,5 @@ while True:
         print(f"退出成功！")
         break
     else: print(f"无效选项，请重新输入")
+
+export_products_to_csv(products,"inventory_export.csv")
