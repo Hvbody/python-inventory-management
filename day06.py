@@ -54,7 +54,6 @@ def find_max_stock_product(products):
     for product in products:
         if max_product["stock"]<product["stock"]:
             max_product=product
-    print(f"库存最多产品：{max_product['name']},库存数量：{max_product['stock']}")
     return max_product
 
 def show_high_price(products):
@@ -76,7 +75,7 @@ def calculate_total_value(products):
     total_value = 0
     for product in products:
         total_pricestock= get_product_value(product)
-        total_pricestock = total_pricestock +total_value
+        total_value = total_pricestock +total_value
     return total_value
 
 
@@ -127,42 +126,53 @@ def show_statistics(products):
 
 #功能10新增库存产品
 def Add_product(products):
-    product_name = input("输入新产品的名字：").strip()
-    if product_name == "":
-        print("输入新的名字不能为空")
-    else:
-        res = find_product_by_name(products,product_name)
-        if res is None:
-            while True:
-                try:
-                    price = float(input("请输入单价："))
-                    if price <=0:
-                        print("单价必须大于0,请重新输入")
-                        continue
-                    break
-                except ValueError:
-                    print("输入错误，请输入数字")
-            while True:
-                try:
-                    stock = int(input("请输入库存："))
-                    if stock <0:
-                        print("库存必须大于0,请重新输入")
-                        continue
-                    break
-                except ValueError:
-                    print("输入错误，请输入数字")
-            new_product = {
-                "name"  : product_name,
-                "price" : price,
-                "stock" : stock
-            }
-            products.append(new_product)
-            print("新增加的产品：")
-            show_single_product(new_product)
-        else :
-            print("输入的产品名称已经存在")
+    while True:
+        product_name = input("输入新产品的名字：").strip()
+        if product_name == "break":
+            break
+        elif product_name == "":
+            print("输入新的名字不能为空,若不新增请输入break")
+            continue
+        else:
+            res = find_product_by_name(products,product_name)
+            if res is None:
+                while True:
+                    try:
+                        price = float(input("请输入单价："))
+                        if price <=0:
+                            print("单价必须大于0,请重新输入")
+                            continue
+                        break
+                    except ValueError:
+                        print("输入错误，请输入数字")
+                while True:
+                    try:
+                        stock = int(input("请输入库存："))
+                        if stock <0:
+                            print("库存必须不小于0,请重新输入")
+                            continue
+                        break
+                    except ValueError:
+                        print("输入错误，请输入数字")
+                new_product = {
+                    "name"  : product_name,
+                    "price" : price,
+                    "stock" : stock
+                }
+                products.append(new_product)
+                print("新增加的产品：")
+                show_single_product(new_product)
+                break
+            else :
+                print("输入的产品名称已经存在")
+                break
+
 def show_single_product(res):
-     print(f"产品名称：{res['name']},单价：{res['price']},库存：{res['stock']}")
+    if res is None:
+        print(f"没有可以展示的产品")
+        return  
+    else:  
+        print(f"产品名称：{res['name']},单价：{res['price']},库存：{res['stock']}")
 
 def delete_product(products):
     product_name = input("输入需要删除产品的名字：").strip()
@@ -223,9 +233,9 @@ def filter_products(products,min_stock,min_value):
     if_stock = 0
     if_value = 0
     for product in products:
-        if product["stock"] > min_stock :
+        if product["stock"] >= min_stock :
             if_stock=if_stock+1
-            if get_product_value(product) >min_value:
+            if get_product_value(product) >= min_value:
                 if_value = if_value +1
                 leg_products.append(product)
     if if_stock == 0:
@@ -239,10 +249,13 @@ def filter_products(products,min_stock,min_value):
 def build_inventory_summary(products):
     product_count = len(products)
     total_stock  = calculate_total_stock(products)
-    average_stock = total_stock / product_count
+    if product_count ==0:
+        average_stock=0
+    else:
+        average_stock = total_stock / product_count
     total_value = calculate_total_value(products)
-    max_stock_product = find_max_stock_product
-    max_value_product = find_max_price_product
+    max_stock_product = find_max_stock_product(products)
+    max_value_product = find_max_price_product(products)
     new_static_product = {
         "product_count" : product_count,
         "total_stock" :total_stock,
@@ -269,8 +282,7 @@ def export_products_to_csv(products,filename):
                 ])
         print(f"成功导出{len(products)}条产品数据到{filename}")
     except OSError as e:
-        print(f"文件导出失败：{e}")
-    
+        print(f"文件导出失败：{e}") 
 
 text ="""=============库存管理系统=============
 1.显示所有产品
@@ -306,6 +318,7 @@ while True:
         show_statistics(products)
     elif choice == "5":
         max_stock = find_max_stock_product(products)
+        print(f"库存最多产品：{max_stock['name']},库存数量：{max_stock['stock']}")
     elif choice == "6":
         show_difference_stocklevel(products)
     elif choice == "7":
@@ -342,8 +355,8 @@ while True:
                 print("输入错误，请输入数字")
         while True:
             try:
-                min_value = int(input("输入最低价值："))                    
-                if min_stock <0:
+                min_value = float(input("输入最低价值："))                    
+                if min_value <0:
                     print("价值必须是非负整数,请重新输入")
                     continue
                 break
