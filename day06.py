@@ -164,8 +164,8 @@ def Add_product(products):
                 show_single_product(new_product)
                 break
             else :
-                print("输入的产品名称已经存在")
-                break
+                print("输入的产品名称已经存在,请输入新名称,若退出输入break")
+                continue
 
 def show_single_product(res):
     if res is None:
@@ -217,32 +217,21 @@ def inventory_report(products):
 #寻找最大价值
 def find_max_price_product(products):
     if len(products)==0:
-        print("当前没有产品,无法查找库存最高价值")
         return None
     max_product=products[0]
     for product in products:
         if get_product_value(max_product)<get_product_value(product):
             max_product=product
-    print(f"货值最高的产品：{max_product['name']},货值：{get_product_value(max_product)}")
     return max_product
 
 
 #day09--新增组合筛选功能
 def filter_products(products,min_stock,min_value):
     leg_products = [ ]
-    if_stock = 0
-    if_value = 0
     for product in products:
         if product["stock"] >= min_stock :
-            if_stock=if_stock+1
             if get_product_value(product) >= min_value:
-                if_value = if_value +1
                 leg_products.append(product)
-    if if_stock == 0:
-        print(f"没有库存大于:{min_stock}")
-    else:
-        if if_value == 0:
-            print(f"没有库存价值大于：{min_value}")
     return leg_products
 
 #day10任务1：建立统一的统计数据函数，未解决返回值None的问题
@@ -318,7 +307,10 @@ while True:
         show_statistics(products)
     elif choice == "5":
         max_stock = find_max_stock_product(products)
-        print(f"库存最多产品：{max_stock['name']},库存数量：{max_stock['stock']}")
+        if max_stock is not None:
+            print(f"库存最多产品：{max_stock['name']},库存数量：{max_stock['stock']}")
+        else :
+             print("当前没有产品,无法查找库存最高价值")
     elif choice == "6":
         show_difference_stocklevel(products)
     elif choice == "7":
@@ -357,7 +349,7 @@ while True:
             try:
                 min_value = float(input("输入最低价值："))                    
                 if min_value <0:
-                    print("价值必须是非负整数,请重新输入")
+                    print("价值必须不能小于0,请重新输入")
                     continue
                 break
             except ValueError:
@@ -365,6 +357,8 @@ while True:
         products_filter =filter_products(products,min_stock,min_value)
         if len(products_filter) !=0:
             show_products(products_filter)
+        else :
+            print(f"没有符合条件的产品")
     elif choice == "15":
         while True:
             filename = input("请输入文件名：").strip()
